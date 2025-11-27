@@ -53,7 +53,9 @@
                                         SelectionMode="Single"
                                         SelectedItem="{Binding SelectedBarber, Mode=TwoWay}"
                                         ItemsLayout="VerticalList"
-                                        VerticalOptions="Fill"
+                                        ItemSizingStrategy="MeasureFirstItem"
+                                        HeightRequest="300"
+                                        VerticalOptions="Start"
                                         VerticalScrollBarVisibility="Always">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Barber">

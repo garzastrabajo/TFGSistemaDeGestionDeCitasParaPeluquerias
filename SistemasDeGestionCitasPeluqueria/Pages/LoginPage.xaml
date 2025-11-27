@@ -51,7 +51,8 @@
                             <Entry x:Name="UserEntry"
                                    Style="{StaticResource LoginEntryStyle}"
                                    Placeholder="juan.diaz"
-                                   Text="{Binding Username}" />
+                                   Text="{Binding Username}"
+                                   ReturnType="Next" />
                         </Border>
                     </VerticalStackLayout>
 
@@ -66,7 +67,9 @@
                                    Style="{StaticResource LoginEntryStyle}"
                                    IsPassword="True"
                                    Placeholder="********"
-                                   Text="{Binding Password}" />
+                                   Text="{Binding Password}"
+                                   ReturnType="Go"
+                                   ReturnCommand="{Binding LoginCommand}" />
                         </Border>
                     </VerticalStackLayout>
 
