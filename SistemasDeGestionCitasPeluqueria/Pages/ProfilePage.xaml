@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:SistemasDeGestionCitasPeluqueria.PageModels"
              xmlns:models="clr-namespace:SistemasDeGestionCitasPeluqueria.Models"
+             xmlns:behaviors="clr-namespace:SistemasDeGestionCitasPeluqueria.Behaviors"
              x:Class="SistemasDeGestionCitasPeluqueria.Pages.ProfilePage"
              x:DataType="pageModels:ProfilePageModel"
              x:Name="ProfilePageRoot"
@@ -263,10 +264,20 @@
                                     <Entry Grid.Row="1" Grid.Column="0" Text="{Binding Name}" BackgroundColor="{StaticResource SurfaceAlt}" TextColor="{StaticResource Gray950}" PlaceholderColor="{StaticResource Gray600}" HeightRequest="42" />
 
                                     <Label Grid.Row="0" Grid.Column="1" Text="Email" FontSize="12" TextColor="{StaticResource Gray600}" Margin="0,0,0,4"/>
-                                    <Entry Grid.Row="1" Grid.Column="1" Text="{Binding Email}" Keyboard="Email" BackgroundColor="{StaticResource SurfaceAlt}" TextColor="{StaticResource Gray950}" PlaceholderColor="{StaticResource Gray600}" HeightRequest="42" />
+                                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2">
+                                        <Entry Text="{Binding Email}" Keyboard="Email" BackgroundColor="{StaticResource SurfaceAlt}" TextColor="{StaticResource Gray950}" PlaceholderColor="{StaticResource Gray600}" HeightRequest="42" />
+                                        <Label Text="{Binding EmailError}" IsVisible="{Binding ShowEmailError}" FontSize="11" TextColor="{StaticResource ErrorAlertText}" />
+                                    </VerticalStackLayout>
 
                                     <Label Grid.Row="2" Grid.Column="0" Text="Teléfono" FontSize="12" TextColor="{StaticResource Gray600}" Margin="0,8,0,4"/>
-                                    <Entry Grid.Row="3" Grid.Column="0" Text="{Binding Phone}" Keyboard="Telephone" BackgroundColor="{StaticResource SurfaceAlt}" TextColor="{StaticResource Gray950}" PlaceholderColor="{StaticResource Gray600}" HeightRequest="42" />
+                                    <VerticalStackLayout Grid.Row="3" Grid.Column="0" Spacing="2">
+                                        <Entry Text="{Binding Phone}" Keyboard="Telephone" BackgroundColor="{StaticResource SurfaceAlt}" TextColor="{StaticResource Gray950}" PlaceholderColor="{StaticResource Gray600}" HeightRequest="42">
+                                            <Entry.Behaviors>
+                                                <behaviors:DigitsOnlyBehavior />
+                                            </Entry.Behaviors>
+                                        </Entry>
+                                        <Label Text="{Binding PhoneError}" IsVisible="{Binding ShowPhoneError}" FontSize="11" TextColor="{StaticResource ErrorAlertText}" />
+                                    </VerticalStackLayout>
 
                                     <Label Grid.Row="2" Grid.Column="1" Text="Fecha de nacimiento" FontSize="12" TextColor="{StaticResource Gray600}" Margin="0,8,0,4"/>
                                     <DatePicker Grid.Row="3" Grid.Column="1"
@@ -289,7 +300,7 @@
                                     <Button Text="Cancelar" Style="{StaticResource SecondaryButtonStyle}" WidthRequest="100" Margin="0,0,8,8"
                                             Command="{Binding LoadCommand}" />
                                     <Button Text="Guardar cambios" Style="{StaticResource PrimarySuccessButton}" WidthRequest="140" Margin="0,0,8,8"
-                                            Command="{Binding SaveCommand}" />
+                                            Command="{Binding SaveCommand}" IsEnabled="{Binding Source={x:Reference ProfilePageRoot}, Path=BindingContext.CanSave}" />
                                 </FlexLayout>
                             </Grid>
                         </Frame>

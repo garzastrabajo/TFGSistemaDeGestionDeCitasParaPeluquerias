@@ -40,12 +40,18 @@ public partial class RegisterDialogPageModel : ObservableObject
     [ObservableProperty] private string phoneError = string.Empty;
     [ObservableProperty] private bool isPhoneValid = true;
 
+    // Validación email
+    [ObservableProperty] private bool showEmailError;
+    [ObservableProperty] private string emailError = string.Empty;
+    [ObservableProperty] private bool isEmailValid = true;
+
     partial void OnPasswordChanged(string value) => EvaluatePassword();
     partial void OnConfirmPasswordChanged(string value) => EvaluateConfirm();
     partial void OnErrorChanged(string? value) => HasError = !string.IsNullOrEmpty(value);
     partial void OnUsernameChanged(string value) => RegisterCommand.NotifyCanExecuteChanged();
     partial void OnIsBusyChanged(bool value) => RegisterCommand.NotifyCanExecuteChanged();
     partial void OnPhoneChanged(string value) => EvaluatePhone();
+    partial void OnEmailChanged(string value) => EvaluateEmail();
 
     void EvaluatePassword()
     {
@@ -102,11 +108,28 @@ public partial class RegisterDialogPageModel : ObservableObject
         RegisterCommand.NotifyCanExecuteChanged();
     }
 
-    static bool IsValidPhone(string value)
+    void EvaluateEmail()
     {
-        // Acepta exactamente 9 dígitos (ej. móviles españoles). Se puede ampliar si hace falta.
-        return value.Length == 9 && value.All(char.IsDigit);
+        var raw = Email?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(raw))
+        {
+            IsEmailValid = true;          // opcional: vacío es válido
+            ShowEmailError = false;
+            EmailError = string.Empty;
+        }
+        else
+        {
+            // Requisito: contiene '@' y formato general válido
+            IsEmailValid = raw.Contains('@') && IsValidEmail(raw);
+            ShowEmailError = !IsEmailValid;
+            EmailError = IsEmailValid ? string.Empty : "Introduce un correo válido (debe contener '@').";
+        }
+
+        RegisterCommand.NotifyCanExecuteChanged();
     }
+
+    static bool IsValidPhone(string value)
+        => value.Length == 9 && value.All(char.IsDigit);
 
     static (bool len, bool upper, bool lower, bool digit, bool symbol) ValidatePassword(string pwd)
         => (pwd.Length >= 8,
@@ -122,7 +145,8 @@ public partial class RegisterDialogPageModel : ObservableObject
         && !string.IsNullOrWhiteSpace(Username)
         && IsLenOk && IsUpperOk && IsLowerOk && IsDigitOk && IsSymbolOk
         && Password == ConfirmPassword
-        && IsPhoneValid; // Bloquea si teléfono inválido
+        && IsPhoneValid
+        && IsEmailValid; // nuevo bloqueo por email inválido
 
     [RelayCommand(CanExecute = nameof(CanRegister))]
     async Task RegisterAsync()
@@ -152,10 +176,15 @@ public partial class RegisterDialogPageModel : ObservableObject
                 return;
             }
 
-            // Revalidar teléfono (defensivo)
             if (!IsPhoneValid)
             {
                 Error = "Revisa el teléfono: debe tener 9 dígitos.";
+                return;
+            }
+
+            if (!IsEmailValid)
+            {
+                Error = "Introduce un email válido o déjalo vacío.";
                 return;
             }
 

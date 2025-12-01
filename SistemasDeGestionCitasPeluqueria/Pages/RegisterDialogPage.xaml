@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:conv="clr-namespace:SistemasDeGestionCitasPeluqueria.Converters"
              xmlns:pageModels="clr-namespace:SistemasDeGestionCitasPeluqueria.PageModels"
+             xmlns:behaviors="clr-namespace:SistemasDeGestionCitasPeluqueria.Behaviors"
              x:Class="SistemasDeGestionCitasPeluqueria.Pages.RegisterDialogPage"
              x:DataType="pageModels:RegisterDialogPageModel"
              Title="Registro"
@@ -33,19 +34,39 @@
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Email (opcional)" FontSize="12" TextColor="{DynamicResource TextPrimary}" />
                             <Border Style="{StaticResource LoginInputBorderStyle}">
-                                <Entry Style="{StaticResource LoginEntryStyle}" Placeholder="juan@ejemplo.com" Keyboard="Email" Text="{Binding Email}" />
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding ShowEmailError}" Value="True">
+                                        <Setter Property="Stroke" Value="{DynamicResource ErrorAlertText}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Entry Style="{StaticResource LoginEntryStyle}"
+                                       Placeholder="juan@ejemplo.com"
+                                       Keyboard="Email"
+                                       Text="{Binding Email}" />
                             </Border>
+                            <Label FontSize="11"
+                                   Text="{Binding EmailError}"
+                                   TextColor="{DynamicResource ErrorAlertText}"
+                                   IsVisible="{Binding ShowEmailError}" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Teléfono (opcional)" FontSize="12" TextColor="{DynamicResource TextPrimary}" />
                             <Border Style="{StaticResource LoginInputBorderStyle}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding ShowPhoneError}" Value="True">
+                                        <Setter Property="Stroke" Value="{DynamicResource ErrorAlertText}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
                                 <Entry Style="{StaticResource LoginEntryStyle}"
                                        Placeholder="600123456"
                                        Keyboard="Telephone"
-                                       Text="{Binding Phone}" />
+                                       Text="{Binding Phone}">
+                                    <Entry.Behaviors>
+                                        <behaviors:DigitsOnlyBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
                             </Border>
-                            <!-- Mensaje de error teléfono -->
                             <Label FontSize="11"
                                    Text="{Binding PhoneError}"
                                    TextColor="{DynamicResource ErrorAlertText}"
@@ -62,6 +83,7 @@
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Contraseña" FontSize="12" TextColor="{DynamicResource TextPrimary}" />
                             <Border Style="{StaticResource LoginInputBorderStyle}">
+
                                 <Entry Style="{StaticResource LoginEntryStyle}" IsPassword="True" Placeholder="********" Text="{Binding Password}" />
                             </Border>
 
