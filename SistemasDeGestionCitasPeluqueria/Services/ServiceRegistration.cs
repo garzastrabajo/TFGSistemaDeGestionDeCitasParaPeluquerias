@@ -91,11 +91,11 @@ public static class ServiceRegistration
             return u;
 
 #if ANDROID
-        return new Uri("http://10.0.2.2:8000/");
+        return new Uri("http://10.0.2.2:25007/");
 #elif IOS || MACCATALYST
-        return new Uri("http://localhost:8000/");
+        return new Uri("http://localhost:25007/");
 #else
-        return new Uri("http://localhost:8000/");
+        return new Uri("http://localhost:25007/");
 #endif
     }
 }
