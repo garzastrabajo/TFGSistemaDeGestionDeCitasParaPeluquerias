@@ -5,9 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
+using SistemasDeGestionCitasPeluqueria.Messaging;
 using SistemasDeGestionCitasPeluqueria.Models;
 using SistemasDeGestionCitasPeluqueria.Pages;
 using SistemasDeGestionCitasPeluqueria.Services;
@@ -20,6 +22,9 @@ public partial class ProfilePageModel : ObservableObject
     private readonly IServiceProvider _services;
     private readonly IUserService _userService;
     private readonly IBookingService _bookingService;
+
+    // Guardamos Id del usuario actual para enviar en el mensaje
+    private int _userId;
 
     public ProfilePageModel(IAuthService authService, IServiceProvider services, IUserService userService, IBookingService bookingService)
     {
@@ -61,6 +66,7 @@ public partial class ProfilePageModel : ObservableObject
             var me = await _userService.GetMeAsync(ct);
             if (me is not null)
             {
+                _userId = me.Id; // <- importante para el mensaje
                 Username = me.Username;
                 Name = me.Name;
                 Email = me.Email;
@@ -108,7 +114,12 @@ public partial class ProfilePageModel : ObservableObject
             };
 
             await _userService.UpdateMeAsync(req, ct);
-            await LoadAsync(ct);
+            await LoadAsync(ct); // recarga valores canónicos del servidor
+
+            // Notificar a toda la app que el perfil del usuario actual cambió
+            WeakReferenceMessenger.Default.Send(
+                new UserProfileUpdatedMessage(_userId, Username, Name, PhotoUrl)
+            );
 
             await Application.Current!.MainPage!.DisplayAlert("Perfil", "Los cambios se guardaron correctamente.", "Aceptar");
         }
@@ -164,6 +175,12 @@ public partial class ProfilePageModel : ObservableObject
                 if (!string.IsNullOrWhiteSpace(url))
                 {
                     PhotoUrl = url;
+
+                    // Notificar cambio inmediato de foto
+                    WeakReferenceMessenger.Default.Send(
+                        new UserProfileUpdatedMessage(_userId, Username, Name, PhotoUrl)
+                    );
+
                     await Application.Current!.MainPage!.DisplayAlert("Perfil", "Foto actualizada.", "Aceptar");
                 }
             }

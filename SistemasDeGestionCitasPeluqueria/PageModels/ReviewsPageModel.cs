@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using SistemasDeGestionCitasPeluqueria.Messaging;
 using SistemasDeGestionCitasPeluqueria.Models;
 using SistemasDeGestionCitasPeluqueria.Services;
 
@@ -39,9 +41,21 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
 
         [ObservableProperty] private ObservableCollection<RatingDistributionItem> ratingDistribution = [];
 
+        private bool _subscribedToProfileChanges;
+
         [RelayCommand]
         public async Task LoadAsync(CancellationToken ct = default)
         {
+            if (!_subscribedToProfileChanges)
+            {
+                _subscribedToProfileChanges = true;
+                WeakReferenceMessenger.Default.Register<UserProfileUpdatedMessage>(this, (_, __) =>
+                {
+                    // Refrescar reseñas automáticamente cuando cambie el perfil
+                    _ = LoadAsync();
+                });
+            }
+
             if (IsBusy) return;
             try
             {
