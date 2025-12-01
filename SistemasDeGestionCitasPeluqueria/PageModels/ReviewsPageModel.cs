@@ -61,19 +61,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
         {
             if (review is null) return;
 
-            // Completar nombre y foto de usuario si faltan
-            if (string.IsNullOrWhiteSpace(review.UserName) || string.IsNullOrWhiteSpace(review.UserPhotoUrl))
-            {
-                var me = await _userService.GetMeAsync(ct);
-                if (me is not null)
-                {
-                    if (string.IsNullOrWhiteSpace(review.UserName))
-                        review.UserName = !string.IsNullOrWhiteSpace(me.Name) ? me.Name : me.Username;
-                    if (string.IsNullOrWhiteSpace(review.UserPhotoUrl) && !string.IsNullOrWhiteSpace(me.PhotoUrl))
-                        review.UserPhotoUrl = me.PhotoUrl;
-                }
-            }
-
+            // No completar UserName/UserPhotoUrl aquí: que lo haga siempre el backend
             await EnrichSingleAsync(review, ct);
 
             if (review.Id == 0)

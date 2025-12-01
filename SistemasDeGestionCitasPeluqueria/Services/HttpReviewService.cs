@@ -31,9 +31,8 @@ namespace SistemasDeGestionCitasPeluqueria.Services
                 barberId = review.BarberId ?? 0,
                 serviceId = review.ServiceId ?? 0,
                 rating = review.Rating,
-                comment = review.Comment ?? string.Empty,
-                userName = review.UserName ?? "Usuario",
-                userPhotoUrl = review.UserPhotoUrl
+                comment = review.Comment ?? string.Empty
+                // El backend resolverá siempre nombre y foto desde el perfil actual
             };
 
             var response = await _http.PostAsJsonAsync("reviews", payload, JsonDefaults.Web, ct);
@@ -51,7 +50,7 @@ namespace SistemasDeGestionCitasPeluqueria.Services
                 review.CreatedAt = created.CreatedAt;
                 review.BarberId = created.BarberId;
                 review.ServiceId = created.ServiceId;
-                review.UserName = created.UserName;
+                review.UserName = created.UserName; // ya viene del perfil actual
                 review.UserPhotoUrl = UrlHelper.EnsureAbsolute(created.UserPhotoUrl, _http.BaseAddress);
             }
             else
