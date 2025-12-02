@@ -28,12 +28,12 @@ Aplicación lista para Windows/Android; adicionalmente macOS/iOS/MacCatalyst y T
 
 ## Características
 - Login / registro con JWT (almacenamiento seguro de tokens).
-- Productos con filtrado por categoría (opcional). Servicios sin filtro en `ServicesPageModel`.
-- Página principal: barbería, barberos, horario, galería, destacados.
-- Sistema de reservas: selección de barbero, fecha y huecos disponibles dinámicos.
+- Productos con filtrado por categoría (opcional). Servicios sin filtro (filtro por categoría pendiente, ver roadmap) en `ServicesPageModel`.
+- Página principal: barbería, barberos, horario, galería, destacados (con fallback hero si no hay imagen principal válida).
+- Sistema de reservas: selección de barbero, fecha y huecos disponibles dinámicos (redondeo automático al siguiente bloque de 30 min si es "hoy").
 - Perfil de usuario: edición de datos, foto, histórico y próximas citas (cancelación).
 - Consumo de endpoints REST del backend (FastAPI).
-- Normalización automática de URLs de imágenes.
+- Normalización automática y sanitización de URLs de imágenes (corrige `data:https://...` a forma válida o descarta).
 - Manejo de estados (`IsBusy`, `Error`) y mensajes de usuario.
 - Uso de Syncfusion (componentes UI) y CommunityToolkit.Mvvm.
 
@@ -102,13 +102,14 @@ SistemasDeGestionCitasPeluqueria/
 ├─ Properties/          # Configuración de proyecto
 ├─ Behaviors/           # Behaviors reutilizables
 ├─ Converters/          # IValueConverters para UI
-├─ Helpers/             # Utilidades y helpers
+├─ Helpers/             # Utilidades y helpers (incluye `ServiceHelper` para DI simplificada)
 ├─ Messaging/           # Mensajería interna
 ├─ Models/              # DTOs y modelos
 ├─ PageModels/          # ViewModels (MVVM)
 ├─ Pages/               # Vistas XAML
 ├─ Platforms/           # Código por plataforma
 ├─ Resources/           # Estilos, fuentes, imágenes
+│  └─ Raw/              # Contenido estático (ej. `AboutAssets.txt`) para carga directa
 ├─ Services/            # Servicios y clientes HTTP
 └─ README.md
 ```
@@ -116,18 +117,35 @@ SistemasDeGestionCitasPeluqueria/
 ## Arquitectura y Patrones
 - MVVM: `PageModels` heredan de `ObservableObject`; propiedades con `[ObservableProperty]` y comandos con `[RelayCommand]`.
 - DI: servicios HTTP registrados en `MauiProgram` mediante métodos de extensión (p.ej. `AddBackendClients`).
+	- PageModels: típicamente `Transient` para evitar retener estado obsoleto (ej. `LoginPageModel`), otros que mantienen estado transversal pueden ser `Singleton` o `Scoped` (según plataforma MAUI se usa `Singleton` para servicios y `Transient` para páginas / viewmodels efímeros).
+	- `AppShell` puede registrarse vía DI y resolverse en `App.CreateWindow` para facilitar pruebas y reemplazos.
 - Behaviors: validaciones ligeras y reutilizables en XAML (p. ej. `DigitsOnlyBehavior`).
 - Messaging: comunicación desacoplada con `WeakReferenceMessenger` (p. ej. perfil actualizado).
 - `HttpClient` por servicio + `AuthenticatedHttpMessageHandler` para `Authorization: Bearer <token>`.
 - Shell Navigation para rutas (`await Shell.Current.GoToAsync("booking", parms)`).
+	- Registro explícito de rutas en `AppShell.xaml.cs`: `Routing.RegisterRoute("booking", typeof(BookingPage));`.
 - Normalización de imágenes: `UrlHelper.EnsureAbsolute(string relativeOrAbsolute)`.
 - Gestión de estado consistente (`IsBusy`, `Error`) y actualización reactiva de colecciones.
+
+### Inyección de Dependencias (Resumen Ciclo de Vida)
+En `MauiProgram`:
+```csharp
+builder.Services.AddTransient<LoginPageModel>();
+builder.Services.AddTransient<BookingPageModel>();
+builder.Services.AddSingleton<MainPageModel>(); // Conserva datos cargados (barberos, hero, etc.)
+builder.Services.AddSingleton<ITokenStore, SecureTokenStore>();
+builder.Services.AddSingleton<AppShell>();
+```
+Motivo:
+- Login: se descarta tras autenticar (no persiste estado).
+- Main: mantiene cache ligera (barbershop, imágenes) para navegación más fluida.
+- AppShell por DI: facilita reemplazo en tests y acceso central a rutas.
 
 ## Páginas y PageModels
 | Página    | ViewModel            | Descripción                                          |
 |-----------|----------------------|------------------------------------------------------|
 | Login     | `LoginPageModel`     | Autenticación (login / registro)                     |
-| Main      | `MainPageModel`      | Barbería, barberos, destacados, galería              |
+| Main      | `MainPageModel`      | Barbería, barberos, destacados, galería (fallback hero automático) |
 | Services  | `ServicesPageModel`  | Lista de servicios + acción reservar                 |
 | Products  | `ProductsPageModel`  | Inventario / filtrado por categoría (opcional)       |
 | Booking   | `BookingPageModel`   | Selección de fecha/hora y confirmación               |
@@ -138,6 +156,7 @@ SistemasDeGestionCitasPeluqueria/
 - Autenticación: `IAuthService` (login / registro) no usa handler con token.
 - `ITokenStore`: guarda y recupera tokens de forma segura (KeyChain / SecureStorage / etc.).
 - Resto de servicios (`IServiceOfferingService`, `IInventoryService`, `IAvailabilityService`, `IBookingService`, `IReviewService`, `IBarbershopService`, `IGalleryService`, `IUserService`, `IProductCategoryService`...) inyectan handler para añadir cabecera `Authorization`.
+- Handler `AuthenticatedHttpMessageHandler`: intercepta 401, intenta refresh automático (si refresh token vigente), reintenta una sola vez.
 - Serialización JSON tolerante: opciones tipo camelCase (ej. `JsonDefaults.Web`).
 
 ## Resumen de Servicios HTTP
@@ -156,9 +175,10 @@ SistemasDeGestionCitasPeluqueria/
 
 ## Flujo de Reserva
 1. Usuario elige servicio (o inicia desde listado de servicios). Comando `ReserveAsync` navega a `booking` pasando parámetros (ServiceId, Price...).
-2. `BookingPageModel` carga barberos y disponibilidad vía `IAvailabilityService.GetAsync` filtrando fecha.
-3. Usuario selecciona hueco → comando `ConfirmAsync` crea cita (`IBookingService.CreateAsync`).
-4. Control de concurrencia: si el hueco ya fue tomado el backend responde 409 y se muestra mensaje apropiado.
+2. `BookingPageModel` carga barberos y disponibilidad vía `IAvailabilityService.GetAsync` filtrando fecha. Si la fecha es hoy y la hora actual ya pasó el último slot, se sugiere día siguiente.
+3. Redondeo dinámico: al abrir la página en "hoy" se calcula el próximo bloque múltiplo de 30 minutos para iniciar display de slots.
+4. Usuario selecciona hueco → pre-check local (verifica no reservado recientemente) y comando `ConfirmAsync` crea cita (`IBookingService.CreateAsync`).
+5. Control de concurrencia: si el hueco ya fue tomado el backend responde 409 → se refresca disponibilidad y se notifica al usuario.
 
 Diagrama rápido:
 ```
@@ -172,8 +192,9 @@ Diagrama rápido:
 - Imágenes destacadas: gestionadas desde el backend (`barbershop.images`).
 
 ## Seguridad y Permisos
-- Tokens: almacenados con `ITokenStore` usando `SecureStorage`/KeyChain según plataforma.
-- Expiración: maneja 401 forzando re-login o implementa refresh tokens.
+- Tokens: almacenados con `ITokenStore` (implementación `SecureTokenStore`) usando `SecureStorage` / KeyChain. Se persisten: `access_token`, `refresh_token`, `expires_at`.
+- Expiración: handler intenta refresh transparente una vez; si falla → re-login.
+- Recomendación: usar siempre HTTPS en despliegues y planificar rotación periódica de refresh tokens (pendiente roadmap).
 - Permisos Android/iOS: acceso a cámara/galería (MediaPicker), almacenamiento si aplica.
 - Transporte: usa siempre HTTPS en despliegues públicos.
 
@@ -184,6 +205,7 @@ Diagrama rápido:
 | Error 401 frecuente          | Token expirado                   | Implementar refresh tokens / forzar re-login  |
 | Android sin acceso backend   | Uso de localhost                 | Usar `10.0.2.2` en emulador                   |
 | Huecos vacíos                | Sin disponibilidad en API        | Verificar rango fecha/barbero                 |
+| Slots vacíos hoy             | Hora actual supera últimos huecos| Probar fecha futura / avanzar hora (redondeo automático aplicado) |
 | Reserva duplicada (409)      | Carrera en confirmación          | Mostrar aviso y refrescar disponibilidad      |
 | Foto no sube                 | Permisos plataforma              | Revisar permisos `MediaPicker` / FilePicker   |
 
@@ -207,12 +229,30 @@ dotnet build -t:Run -f net9.0-android
 ```
 
 ## Roadmap
-- [ ] Modo offline / caché local básica
-- [ ] Refresh tokens automático
+- [ ] Modo offline / caché local básica (preferencias + SQLite para persistencia ligera)
+- [ ] Filtro de servicios por categoría (paridad con productos)
+- [ ] Refresh tokens automático (rotación y revocación)
 - [ ] Notificaciones push (confirmación de reservas)
 - [ ] Tema oscuro (XAML + recursos dinámicos)
 - [ ] Internacionalización (RESX + binding)
 - [ ] Accesibilidad (contraste y tamaños adaptativos)
+
+## Multiplataforma (macOS / iOS)
+Ejemplos de comandos (requiere entorno configurado y certificados iOS cuando aplique):
+```powershell
+# macOS (MacCatalyst)
+dotnet build -t:Run -f net9.0-maccatalyst
+
+# iOS (simulador)
+dotnet build -t:Run -f net9.0-ios
+```
+
+## Variables de Entorno y Caché
+- `API_BASEURL`: si cambias el backend (p.ej. de localhost a staging) reinicia la app para limpiar tokens y evitar apuntar a una sesión inválida.
+- Tras cambio de URL se recomienda borrar almacenamiento seguro (opcional helper de depuración) antes de nuevo login.
+
+## Fallback de Imágenes (Hero)
+`MainPageModel`: si no existe imagen hero explícita en datos de barbería se toma la primera imagen válida de la galería tras sanitizar URLs (remueve prefijos inválidos tipo `data:https://`). Esto asegura siempre una imagen destacada consistente.
 
 ## Contribución
 1. Crea branch descriptiva: `feat/dark-theme` o `fix/booking-409-handling`.
