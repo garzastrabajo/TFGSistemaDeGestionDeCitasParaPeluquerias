@@ -95,21 +95,39 @@ En Visual Studio: `Project > Properties > Debug > Environment Variables` añadir
 ## Estructura del Proyecto
 ```
 SistemasDeGestionCitasPeluqueria/
-├─ App.xaml             # Recursos globales
-├─ AppShell.xaml        # Shell Navigation (rutas)
-├─ MauiProgram.cs       # DI, Syncfusion, fuentes
-├─ Converters/          # IValueConverters para UI
-├─ Helpers/             # Servicios auxiliares y utilidades
-├─ Models/              # DTOs y entidades simplificadas
-├─ PageModels/          # ViewModels MVVM
-├─ Pages/               # Vistas XAML
-├─ Platforms/           # Código específico por plataforma
+├─ App.xaml                     # Recursos globales
+├─ AppShell.xaml                # Shell Navigation (rutas)
+├─ MauiProgram.cs               # DI, Syncfusion, fuentes
+├─ GlobalXmlns.cs               # Alias XMLNS globales para XAML
+├─ Properties/                  # Configuración de proyecto (launchSettings, etc.)
+├─ Behaviors/                   # Behaviors reutilizables (validaciones de UI)
+│  └─ DigitsOnlyBehavior.cs
+├─ Converters/                  # IValueConverters para UI
+├─ Helpers/                     # Servicios auxiliares y utilidades
+│  └─ ServiceHelper.cs
+├─ Messaging/                   # Mensajería interna (WeakReferenceMessenger)
+│  └─ UserProfileUpdatedMessage.cs
+├─ Models/                      # DTOs y entidades simplificadas
+├─ PageModels/                  # ViewModels MVVM
+├─ Pages/                       # Vistas XAML
+├─ Platforms/                   # Código específico por plataforma
+├─ Resources/                   # Fuentes, estilos, imágenes, raw assets
+├─ Services/                    # Interfaces + implementaciones Http/negocio
 └─ README.md
 ```
+
+Notas de carpetas adicionales:
+- `Behaviors/`: lógica declarativa para entradas de usuario (p. ej. solo dígitos).
+- `Messaging/`: eventos internos desacoplados (ej. `UserProfileUpdatedMessage`).
+- `Services/`: clientes HTTP y servicios de dominio (inyección en `MauiProgram`).
+- `Resources/`: estilos XAML globales, `Resources/Styles` y recursos gráficos.
+- `Properties/`: configuración específica del proyecto/depuración.
 
 ## Arquitectura y Patrones
 - MVVM: `PageModels` heredan de `ObservableObject`; propiedades con `[ObservableProperty]` y comandos con `[RelayCommand]`.
 - DI: servicios HTTP registrados en `MauiProgram` mediante métodos de extensión (p.ej. `AddBackendClients`).
+- Behaviors: validaciones ligeras y reutilizables en XAML (p. ej. `DigitsOnlyBehavior`).
+- Messaging: comunicación desacoplada con `WeakReferenceMessenger` (p. ej. perfil actualizado).
 - `HttpClient` por servicio + `AuthenticatedHttpMessageHandler` para `Authorization: Bearer <token>`.
 - Shell Navigation para rutas (`await Shell.Current.GoToAsync("booking", parms)`).
 - Normalización de imágenes: `UrlHelper.EnsureAbsolute(string relativeOrAbsolute)`.
