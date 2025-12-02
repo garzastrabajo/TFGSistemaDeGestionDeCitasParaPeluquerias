@@ -210,7 +210,7 @@ dotnet build -t:Run -f net9.0-android
 5. Ajusta README si añades secciones relevantes.
 
 Enlaces útiles:
-- Backend (README): [TFG Backend](../README.md)
+- Backend (README): [TFG Backend](https://github.com/garzastrabajo/TFGSistemaDeGestionDeCitasParaPeluqueriasBackend)
 - URL por defecto backend: `http://localhost:25007/`
 
 ## Licencia
