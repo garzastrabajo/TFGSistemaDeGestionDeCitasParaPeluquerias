@@ -1,21 +1,25 @@
-# App Desktop Barbería / Movil 💈 (Frontend .NET MAUI)
+# App Desktop / Móvil Barbería 💈
 
-Aplicación cliente para la plataforma de gestión de barbería: muestra servicios, productos, galería, perfil de usuario y permite realizar y gestionar reservas. Construida con .NET MAUI (orientada a .NET 9), patrón MVVM (CommunityToolkit), DI y consumo de la API FastAPI del backend.
+Cliente multiplataforma (.NET MAUI) para la gestión de barbería: consulta servicios, productos, galería y permite realizar reservas. Implementa MVVM, inyección de dependencias y consume la API FastAPI del backend.
 
-> Nota: Si tu entorno aún usa .NET 8 cámbialo en los comandos y TargetFramework; el contenido asume migración a .NET 9.
+Aplicación lista para Windows/Android (y macOS/iOS con el entorno adecuado), con manejo de autenticación JWT, disponibilidad y reservas.
 
-## Índice
+> Nota: si tu entorno usa .NET 8, ajusta los comandos y `TargetFramework`. Este README asume .NET 9.
+
+## Contenido
 - [Características](#características)
 - [Stack Tecnológico](#stack-tecnológico)
 - [Requisitos](#requisitos)
 - [Quick Start](#quick-start)
-- [Configurar URL del Backend](#configurar-url-del-backend)
+- [Configuración del Backend](#configuración-del-backend)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Arquitectura y Patrones](#arquitectura-y-patrones)
 - [Páginas y PageModels](#páginas-y-pagemodels)
 - [Servicios HTTP y Autenticación](#servicios-http-y-autenticación)
+- [Resumen de Servicios HTTP](#resumen-de-servicios-http)
 - [Flujo de Reserva](#flujo-de-reserva)
 - [Personalización](#personalización)
+- [Seguridad y Permisos](#seguridad-y-permisos)
 - [Troubleshooting](#troubleshooting)
 - [Scripts Útiles](#scripts-útiles)
 - [Roadmap](#roadmap)
@@ -61,17 +65,24 @@ dotnet restore
 dotnet build
 ```
 
-Ejecutar (Windows Desktop):
+Ejecutar desde CLI según plataforma:
 ```powershell
+# Windows Desktop
 dotnet run -f net9.0-windows10.0.19041.0
+
+# Android Emulator / Dispositivo
+dotnet build -t:Run -f net9.0-android
 ```
 
-En Visual Studio: abre la solución `SistemasDeGestionCitasPeluqueria.sln`, selecciona la plataforma (Windows / Android) y pulsa F5.
+En Visual Studio: abre la solución `SistemasDeGestionCitasPeluqueria.sln`, elige Windows o Android y pulsa F5.
 
-## Configurar URL del Backend
-La base se determina en `ServiceRegistration.GetDevBaseAddress()` (o equivalente en tu clase de registro de servicios):
+## Configuración del Backend
+La BaseAddress se determina en `ServiceRegistration.GetDevBaseAddress()` (o similar en tu registro de servicios):
 - Windows / macOS: `http://localhost:25007/`
 - Android Emulator: `http://10.0.2.2:25007/`
+
+> Nota: para emulador Android, `localhost` del host se mapea como `10.0.2.2`.
+> Warning: Syncfusion requiere licencia registrada; sin ella verás watermark en los componentes.
 
 Para sobrescribir la base vía variable de entorno:
 ```powershell
@@ -84,16 +95,16 @@ En Visual Studio: `Project > Properties > Debug > Environment Variables` añadir
 ## Estructura del Proyecto
 ```
 SistemasDeGestionCitasPeluqueria/
-	App.xaml                 # Recursos globales
-	AppShell.xaml            # Definición de rutas Shell
-	MauiProgram.cs           # DI, fuentes, Syncfusion, inicialización
-	Converters/              # IValueConverters para UI
-	Helpers/                 # Lógica auxiliar (servicios, UrlHelper, etc.)
-	Models/                  # DTOs y entidades simplificadas
-	PageModels/              # ViewModels (MVVM) con CommunityToolkit
-	Pages/                   # Vistas XAML y code-behind
-	Platforms/               # Código específico por plataforma
-	README.md                # Este documento
+├─ App.xaml             # Recursos globales
+├─ AppShell.xaml        # Shell Navigation (rutas)
+├─ MauiProgram.cs       # DI, Syncfusion, fuentes
+├─ Converters/          # IValueConverters para UI
+├─ Helpers/             # Servicios auxiliares y utilidades
+├─ Models/              # DTOs y entidades simplificadas
+├─ PageModels/          # ViewModels MVVM
+├─ Pages/               # Vistas XAML
+├─ Platforms/           # Código específico por plataforma
+└─ README.md
 ```
 
 ## Arquitectura y Patrones
@@ -121,17 +132,38 @@ SistemasDeGestionCitasPeluqueria/
 - Resto de servicios (`IServiceCatalogService`, `IAvailabilityService`, `IBookingService`, `IReviewService`, `IProductService`...) inyectan handler para añadir cabecera `Authorization`.
 - Serialización JSON tolerante: opciones tipo camelCase (ej. `JsonDefaults.Web`).
 
+## Resumen de Servicios HTTP
+| Servicio/Interfaz          | Ámbito principal                 |
+|----------------------------|----------------------------------|
+| `IAuthService`             | Registro, login, gestión de JWT  |
+| `IAvailabilityService`     | Consulta de disponibilidad       |
+| `IBookingService`          | Creación y gestión de reservas   |
+| `IServiceCatalogService`   | Listado de servicios             |
+| `IProductService`          | Catálogo de productos            |
+| `IReviewService`           | Reseñas: listar/crear            |
+
 ## Flujo de Reserva
 1. Usuario elige servicio (o inicia desde listado de servicios). Comando `ReserveAsync` navega a `booking` pasando parámetros (ServiceId, Price...).
 2. `BookingPageModel` carga barberos y disponibilidad vía `IAvailabilityService.GetAsync` filtrando fecha.
 3. Usuario selecciona hueco → comando `ConfirmAsync` crea cita (`IBookingService.CreateAsync`).
 4. Control de concurrencia: si el hueco ya fue tomado el backend responde 409 y se muestra mensaje apropiado.
 
+Diagrama rápido:
+```
+🛎️ Servicios → 🧑‍🦱 Barbero → 📅 Fecha/Hora → ✅ Confirmación → 🧾 Reserva
+```
+
 ## Personalización
 - Fuentes: OpenSans registrada en `MauiProgram` (puedes añadir más en `ConfigureFonts`).
 - Syncfusion: clave de licencia registrada (añadir tu propia si cambias de entorno).
 - Estilos globales: puedes centralizarlos en `App.xaml` o crear `Styles.xaml` y fusionar.
 - Imágenes destacadas: gestionadas desde el backend (`barbershop.images`).
+
+## Seguridad y Permisos
+- Tokens: almacenados con `ITokenStore` usando `SecureStorage`/KeyChain según plataforma.
+- Expiración: maneja 401 forzando re-login o implementa refresh tokens.
+- Permisos Android/iOS: acceso a cámara/galería (MediaPicker), almacenamiento si aplica.
+- Transporte: usa siempre HTTPS en despliegues públicos.
 
 ## Troubleshooting
 | Problema                      | Causa                            | Solución                                      |
@@ -163,12 +195,12 @@ dotnet build -t:Run -f net9.0-android
 ```
 
 ## Roadmap
-- Modo offline / caché local básica.
-- Refresh tokens automático.
-- Notificaciones push (confirmación de reservas).
-- Tema oscuro (XAML + recursos dinámicos).
-- Internacionalización (RESX + binding). 
-- Mejora de accesibilidad (contraste, tamaños adaptativos).
+- [ ] Modo offline / caché local básica
+- [ ] Refresh tokens automático
+- [ ] Notificaciones push (confirmación de reservas)
+- [ ] Tema oscuro (XAML + recursos dinámicos)
+- [ ] Internacionalización (RESX + binding)
+- [ ] Accesibilidad (contraste y tamaños adaptativos)
 
 ## Contribución
 1. Crea branch descriptiva: `feat/dark-theme` o `fix/booking-409-handling`.
@@ -176,6 +208,10 @@ dotnet build -t:Run -f net9.0-android
 3. Sigue el patrón MVVM (no lógica en code-behind salvo UI trivial).
 4. Usa comandos async con manejo de `IsBusy`.
 5. Ajusta README si añades secciones relevantes.
+
+Enlaces útiles:
+- Backend (README): [TFG Backend](../README.md)
+- URL por defecto backend: `http://localhost:25007/`
 
 ## Licencia
 Proyecto académico (TFG). Revisa condiciones del backend para alineación si se evoluciona a producción.
