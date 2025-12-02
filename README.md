@@ -137,7 +137,7 @@ SistemasDeGestionCitasPeluqueria/
 ## Servicios HTTP y Autenticación
 - Autenticación: `IAuthService` (login / registro) no usa handler con token.
 - `ITokenStore`: guarda y recupera tokens de forma segura (KeyChain / SecureStorage / etc.).
-- Resto de servicios (`IServiceCatalogService`, `IAvailabilityService`, `IBookingService`, `IReviewService`, `IProductService`...) inyectan handler para añadir cabecera `Authorization`.
+- Resto de servicios (`IServiceOfferingService`, `IInventoryService`, `IAvailabilityService`, `IBookingService`, `IReviewService`, `IBarbershopService`, `IGalleryService`, `IUserService`, `IProductCategoryService`...) inyectan handler para añadir cabecera `Authorization`.
 - Serialización JSON tolerante: opciones tipo camelCase (ej. `JsonDefaults.Web`).
 
 ## Resumen de Servicios HTTP
@@ -146,8 +146,12 @@ SistemasDeGestionCitasPeluqueria/
 | `IAuthService`             | Registro, login, gestión de JWT  |
 | `IAvailabilityService`     | Consulta de disponibilidad       |
 | `IBookingService`          | Creación y gestión de reservas   |
-| `IServiceCatalogService`   | Listado de servicios             |
-| `IProductService`          | Catálogo de productos            |
+| `IServiceOfferingService`  | Listado de servicios             |
+| `IInventoryService`        | Catálogo de productos / inventario|
+| `IProductCategoryService`  | Categorías de productos          |
+| `IBarbershopService`       | Datos de la barbería             |
+| `IGalleryService`          | Galería de imágenes              |
+| `IUserService`             | Perfil de usuario y foto         |
 | `IReviewService`           | Reseñas: listar/crear            |
 
 ## Flujo de Reserva
