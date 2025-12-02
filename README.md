@@ -2,7 +2,7 @@
 
 Cliente multiplataforma (.NET MAUI) para la gestión de barbería: consulta servicios, productos, galería y permite realizar reservas. Implementa MVVM, inyección de dependencias y consume la API FastAPI del backend.
 
-Aplicación lista para Windows/Android (y macOS/iOS con el entorno adecuado), con manejo de autenticación JWT, disponibilidad y reservas.
+Aplicación lista para Windows/Android; adicionalmente macOS/iOS/MacCatalyst y Tizen (opcional) con el entorno adecuado, con manejo de autenticación JWT, disponibilidad y reservas.
 
 > Nota: si tu entorno usa .NET 8, ajusta los comandos y `TargetFramework`. Este README asume .NET 9.
 
@@ -28,7 +28,7 @@ Aplicación lista para Windows/Android (y macOS/iOS con el entorno adecuado), co
 
 ## Características
 - Login / registro con JWT (almacenamiento seguro de tokens).
-- Catálogo de servicios y productos con filtrado por categoría.
+- Productos con filtrado por categoría (opcional). Servicios sin filtro en `ServicesPageModel`.
 - Página principal: barbería, barberos, horario, galería, destacados.
 - Sistema de reservas: selección de barbero, fecha y huecos disponibles dinámicos.
 - Perfil de usuario: edición de datos, foto, histórico y próximas citas (cancelación).
@@ -38,7 +38,7 @@ Aplicación lista para Windows/Android (y macOS/iOS con el entorno adecuado), co
 - Uso de Syncfusion (componentes UI) y CommunityToolkit.Mvvm.
 
 ## Stack Tecnológico
-- .NET 9 + .NET MAUI (Windows / Android / macOS / iOS*)
+- .NET 9 + .NET MAUI (Windows / Android / macOS / iOS / MacCatalyst / Tizen*)
 - CommunityToolkit.Mvvm (atributos `[ObservableProperty]`, `[RelayCommand]`)
 - Syncfusion.Maui.* (requiere licencia; clave registrada en arranque)
 - Inyección de dependencias (`Microsoft.Extensions.DependencyInjection`)
@@ -56,7 +56,7 @@ Aplicación lista para Windows/Android (y macOS/iOS con el entorno adecuado), co
 - Backend en ejecución (por defecto: `http://localhost:25007/`)
 
 ## Quick Start
-Clona el monorepo (backend + frontend):
+Clona el repositorio del frontend:
 
 ```powershell
 git clone https://github.com/garzastrabajo/TFGSistemaDeGestionDeCitasParaPeluquerias.git
@@ -82,7 +82,7 @@ La BaseAddress se determina en `ServiceRegistration.GetDevBaseAddress()` (o simi
 - Android Emulator: `http://10.0.2.2:25007/`
 
 > Nota: para emulador Android, `localhost` del host se mapea como `10.0.2.2`.
-> Warning: Syncfusion requiere licencia registrada; sin ella verás watermark en los componentes.
+> Warning: Syncfusion requiere licencia registrada; sin ella verás watermark en los componentes. La licencia se registra en `MauiProgram.cs`.
 
 Para sobrescribir la base vía variable de entorno:
 ```powershell
@@ -129,7 +129,7 @@ SistemasDeGestionCitasPeluqueria/
 | Login     | `LoginPageModel`     | Autenticación (login / registro)                     |
 | Main      | `MainPageModel`      | Barbería, barberos, destacados, galería              |
 | Services  | `ServicesPageModel`  | Lista de servicios + acción reservar                 |
-| Products  | `ProductsPageModel`  | Inventario / filtrado por categoría                  |
+| Products  | `ProductsPageModel`  | Inventario / filtrado por categoría (opcional)       |
 | Booking   | `BookingPageModel`   | Selección de fecha/hora y confirmación               |
 | Reviews   | `ReviewsPageModel`   | Lectura / creación de reseñas                        |
 | Profile   | `ProfilePageModel`   | Datos del usuario, próximas citas, foto, historial   |
