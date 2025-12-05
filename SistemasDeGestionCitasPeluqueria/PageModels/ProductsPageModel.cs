@@ -40,7 +40,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
                     var cats = await _categoryService.GetAllAsync(ct);
                     var ordered = cats.OrderBy(c => c.Order).ToList();
 
-                    // Insertar "Todos" (opción sintética)
+                    // Insertar "Todos" 
                     ordered.Insert(0, _allCategory);
 
                     Categories = new ObservableCollection<ProductCategory>(ordered);

@@ -22,7 +22,6 @@ public class ServiceReview
 
     public string? UserName { get; set; }
 
-    // Renombrada de Date -> CreatedAt para coincidir con createdAt del backend legacy
     public DateTimeOffset CreatedAt { get; set; }
 
     public string? UserPhotoUrl { get; set; }

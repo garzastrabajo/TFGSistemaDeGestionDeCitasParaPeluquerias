@@ -62,7 +62,6 @@ public static class ServiceRegistration
                 c.Timeout = timeout;
             }).AddHttpMessageHandler<AuthenticatedHttpMessageHandler>();
 
-            // NUEVOS: disponibilidad y reservas
             services.AddHttpClient<IAvailabilityService, HttpAvailabilityService>(c =>
             {
                 c.BaseAddress = baseAddress;

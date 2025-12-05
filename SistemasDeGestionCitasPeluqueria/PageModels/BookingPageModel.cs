@@ -20,7 +20,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
     private CancellationTokenSource? _cts;
     private bool _suppressDateChanged;
 
-    // Límites para el calendario (ajusta MaxBookingDate según necesites)
+    // Límites para el calendario 
     public DateTime MinBookingDate { get; } = DateTime.Today;
     public DateTime MaxBookingDate { get; } = DateTime.Today.AddMonths(2);
 
@@ -101,7 +101,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
             var list = await _barberService.GetAllAsync(ct);
             Barbers = new ObservableCollection<Barber>(list);
 
-            // Importante: selecciona por defecto el primer barbero si no hay selección
+            // selecciona por defecto el primer barbero si no hay selección
             if (SelectedBarber is null && Barbers.Count > 0)
             {
                 SelectedBarber = Barbers.First();
@@ -128,7 +128,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
         _ = UpdateSlotsAsync(_cts?.Token ?? CancellationToken.None);
     }
 
-    // Helpers de ciclo de vida (antes en el code-behind)
+    // Helpers de ciclo de vida
     public async Task OnAppearingAsync()
     {
         _cts?.Cancel();
@@ -205,7 +205,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
         }
     }
 
-    // Habilita/deshabilita Confirm según selección y estado (no exigimos nombre para habilitar)
+    // Habilita/deshabilita Confirm según selección y estado 
     public bool CanConfirm() =>
         SelectedBarber != null &&
         SelectedSlot != null &&
@@ -230,7 +230,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
             IsBusy = true;
             Error = null;
 
-            // Pre-check de disponibilidad (opcional, para mejor UX)
+            // Pre-check de disponibilidad
             try
             {
                 var dateStr = SelectedDate.ToString("yyyy-MM-dd");
@@ -285,7 +285,7 @@ public partial class BookingPageModel(IBarberService barberService, IAvailabilit
         catch (OperationCanceledException) { }
         catch (HttpRequestException httpEx)
         {
-            // Detectar 409 Conflict (StatusCode disponible en .NET moderno)
+            // Detectar 409 Conflict 
             if (httpEx.StatusCode.HasValue && httpEx.StatusCode.Value == System.Net.HttpStatusCode.Conflict)
             {
                 Error = "El horario ya fue reservado por otro cliente.";

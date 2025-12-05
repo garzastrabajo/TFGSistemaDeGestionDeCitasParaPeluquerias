@@ -90,7 +90,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
             }
         }
 
-        // Ahora abre el diálogo y registra sin hacer login automático
+        //  abre el diálogo y registra sin hacer login automático
         [RelayCommand]
         public async Task RegisterAsync(CancellationToken ct)
         {
@@ -109,7 +109,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
                     dto.Password,
                     dto.Email,
                     dto.Name,
-                    dto.Phone,        // NUEVO: enviamos teléfono
+                    dto.Phone,      
                     signIn: false,
                     ct: ct);
 

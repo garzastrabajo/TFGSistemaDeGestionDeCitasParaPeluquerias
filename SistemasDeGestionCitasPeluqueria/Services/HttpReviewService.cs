@@ -20,7 +20,7 @@ namespace SistemasDeGestionCitasPeluqueria.Services
             foreach (var r in list)
                 r.UserPhotoUrl = UrlHelper.EnsureAbsolute(r.UserPhotoUrl, _http.BaseAddress);
 
-            // Más recientes primero (usar CreatedAt)
+            // Más recientes primero 
             return list.OrderByDescending(r => r.CreatedAt).ToList();
         }
 
@@ -50,7 +50,7 @@ namespace SistemasDeGestionCitasPeluqueria.Services
                 review.CreatedAt = created.CreatedAt;
                 review.BarberId = created.BarberId;
                 review.ServiceId = created.ServiceId;
-                review.UserName = created.UserName; // ya viene del perfil actual
+                review.UserName = created.UserName; 
                 review.UserPhotoUrl = UrlHelper.EnsureAbsolute(created.UserPhotoUrl, _http.BaseAddress);
             }
             else

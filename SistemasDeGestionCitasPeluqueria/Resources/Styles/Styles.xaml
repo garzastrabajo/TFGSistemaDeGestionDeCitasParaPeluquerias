@@ -67,20 +67,18 @@
         <Setter Property="FontSize" Value="12" />
     </Style>
 
-    <!-- Estilo global para Editor: evita hardcoded colors -->
+    <!-- Estilo global para Editor -->
     <Style TargetType="Editor">
         <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
         <Setter Property="PlaceholderColor" Value="{DynamicResource TextSecondary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
     </Style>
 
-    <!-- NUEVO: Títulos y subtítulos para tarjetas de información -->
+    <!--  Títulos y subtítulos para tarjetas de información -->
     <Style x:Key="InfoCardTitleStyle" TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <!-- Si lo quieres todo en mayúsculas, descomenta: -->
-        <!-- <Setter Property="TextTransform" Value="Uppercase" /> -->
     </Style>
 
     <Style x:Key="InfoCardSubTextStyle" TargetType="Label">
@@ -108,7 +106,7 @@
         <Setter Property="Padding" Value="16,8" />
     </Style>
 
-    <!-- NUEVO: botón secundario (cancelar) y botón de éxito (guardar) -->
+    <!--  botón secundario (cancelar) y botón de éxito (guardar) -->
     <Style x:Key="SecondaryButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{DynamicResource Surface}" />
         <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
@@ -458,13 +456,13 @@
         <Setter Property="Margin" Value="0,16,0,0" />
     </Style>
 
-    <!-- NUEVO: variante sin accent verde (usa Primary morado) -->
+    <!--  variante sin accent verde (usa Primary morado) -->
     <Style x:Key="LoginPrimaryButtonNoAccent" TargetType="Button" BasedOn="{StaticResource LoginPrimaryButtonStyle}">
         <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
         <Setter Property="TextColor" Value="{StaticResource White}" />
     </Style>
 
-    <!-- NUEVO: botón peligro/destructivo (rojo) -->
+    <!--  botón peligro/destructivo (rojo) -->
     <Style x:Key="PrimaryDangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
         <Setter Property="BackgroundColor" Value="{DynamicResource ErrorBrush}" />
         <Setter Property="TextColor" Value="{StaticResource White}" />
@@ -557,7 +555,6 @@
         <Setter Property="Margin" Value="0,0,0,2" />
         <Setter Property="LineHeight" Value="1.25" />
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
-        <!-- Eliminado: <Setter Property="MaximumWidthRequest" Value="680" /> -->
     </Style>
 
     <!-- Icono cabecera About -->

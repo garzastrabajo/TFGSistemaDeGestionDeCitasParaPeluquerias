@@ -125,7 +125,7 @@
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}"/>
     <SolidColorBrush x:Key="AccentStrokeHoverBrush" Color="{StaticResource AccentHover}"/>
 
-    <!-- NUEVO: colores del gradiente del héroe (referenciados, no hex inline) -->
+    <!--  colores del gradiente del héroe (referenciados, no hex inline) -->
     <Color x:Key="HeroOverlayTop">#00000000</Color>
     <Color x:Key="HeroOverlayMid">#66000000</Color>
     <Color x:Key="HeroOverlayBottom">#CC000000</Color>
@@ -143,7 +143,7 @@
     <Color x:Key="SwitchTrackOff">#E5E7EB</Color>
     <SolidColorBrush x:Key="SwitchTrackOffBrush" Color="{StaticResource SwitchTrackOff}" />
 
-    <!-- NUEVOS COLORES LOGIN -->
+    <!--  COLORES LOGIN -->
     <Color x:Key="LoginCardBgTop">#FFFFFF</Color>
     <Color x:Key="LoginCardBgBottom">#F7F8FA</Color>
     <Color x:Key="LoginInputBg">#FFFFFF</Color>

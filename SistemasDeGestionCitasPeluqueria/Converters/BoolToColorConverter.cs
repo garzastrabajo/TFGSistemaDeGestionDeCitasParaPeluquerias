@@ -7,7 +7,7 @@ namespace SistemasDeGestionCitasPeluqueria.Converters;
 
 public class BoolToColorConverter : IValueConverter
 {
-    // Devuelve SaveAccent cuando true; TextSecondary cuando false (fallbacks incluidos)
+    // true -> SaveAccent; false -> TextSecondary
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         var ok = value as bool? ?? false;
@@ -29,6 +29,7 @@ public class BoolToColorConverter : IValueConverter
         }
         catch { /* ignore */ }
 
+        // Fallback
         return ok ? Colors.Green : Colors.Gray;
     }
 

@@ -68,7 +68,7 @@ public sealed class BookingDto
            : IsCompleted ? "completed"
            : (string.IsNullOrWhiteSpace(Status) ? string.Empty : Status);
 
-    // NUEVO: helper para aplicar estilo amarillo a “confirmada”
+    // helper para aplicar estilo amarillo a “confirmada”
     public bool IsConfirmed =>
         string.Equals(EffectiveStatus, "confirmed", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(EffectiveStatus, "confirmada", StringComparison.OrdinalIgnoreCase);

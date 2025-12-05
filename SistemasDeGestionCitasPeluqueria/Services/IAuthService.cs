@@ -4,13 +4,12 @@ public interface IAuthService
 {
     Task<bool> LoginAsync(string username, string password, CancellationToken ct = default);
 
-    // Se añade 'phone' opcional antes de 'signIn'.
     Task<bool> RegisterAsync(
         string username,
         string password,
         string? email = null,
         string? name = null,
-        string? phone = null,           // NUEVO
+        string? phone = null,           
         bool signIn = true,
         CancellationToken ct = default);
 

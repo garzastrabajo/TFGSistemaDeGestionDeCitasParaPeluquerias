@@ -9,5 +9,5 @@ public sealed class UserProfile
     public string? Phone { get; set; }
     public DateTime? BirthDate { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public string? PhotoUrl { get; set; } // Nueva propiedad para la foto (se serializa como "photoUrl" en JSON)
+    public string? PhotoUrl { get; set; }
 }

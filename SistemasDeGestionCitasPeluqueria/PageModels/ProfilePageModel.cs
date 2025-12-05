@@ -38,7 +38,6 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
         [ObservableProperty] private string? photoUrl;
         [ObservableProperty] private DateTime birthDate = DateTime.Today.AddYears(-30);
 
-        // NUEVAS PROPIEDADES DE VALIDACIÓN
         [ObservableProperty] private bool isEmailValid = true;
         [ObservableProperty] private bool showEmailError;
         [ObservableProperty] private string emailError = string.Empty;

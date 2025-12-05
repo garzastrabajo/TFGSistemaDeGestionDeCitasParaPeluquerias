@@ -35,7 +35,7 @@
                         <Label Text="Comparte tu experiencia con nosotros"
                                Style="{StaticResource MutedTextStyle}" />
 
-                        <!-- Barbero (añadido botón limpiar) -->
+                        <!-- Barbero -->
                         <VerticalStackLayout>
                             <Label Text="Barbero (opcional)" Style="{StaticResource MutedTextStyle}" />
                             <Border Style="{StaticResource OutlinedPickerBorderStyle}" Padding="8,0" Margin="0,4,0,12">
@@ -80,7 +80,7 @@
                             </Border>
                         </VerticalStackLayout>
 
-                        <!-- Servicio (añadido botón limpiar) -->
+                        <!-- Servicio -->
                         <VerticalStackLayout>
                             <Label Text="Servicio (opcional)" Style="{StaticResource MutedTextStyle}" />
                             <Border Style="{StaticResource OutlinedPickerBorderStyle}" Padding="8,0" Margin="0,4,0,12">

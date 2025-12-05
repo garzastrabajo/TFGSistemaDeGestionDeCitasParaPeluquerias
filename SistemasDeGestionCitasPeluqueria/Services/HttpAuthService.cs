@@ -33,7 +33,7 @@ public sealed class HttpAuthService(HttpClient http, ITokenStore tokenStore) : I
         string password,
         string? email = null,
         string? name = null,
-        string? phone = null,          // NUEVO parámetro
+        string? phone = null,          
         bool signIn = true,
         CancellationToken ct = default)
     {
@@ -43,7 +43,7 @@ public sealed class HttpAuthService(HttpClient http, ITokenStore tokenStore) : I
             Password = password,
             Email = email,
             Name = name,
-            Phone = phone // incluir en JSON
+            Phone = phone 
         };
 
         var resp = await _http.PostAsJsonAsync("auth/register", req, JsonDefaults.Web, ct);

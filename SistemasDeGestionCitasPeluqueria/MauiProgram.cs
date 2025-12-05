@@ -26,7 +26,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // Registro de clientes HTTP hacia FastAPI (sin servicios fake)
+        // Registro de clientes HTTP hacia FastAPI 
         builder.Services.AddBackendClients(ServiceRegistration.GetDevBaseAddress());
 
         // Login: TRANSIENT para no reutilizar valores tras logout

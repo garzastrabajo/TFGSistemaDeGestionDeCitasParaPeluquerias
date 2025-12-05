@@ -7,7 +7,7 @@ public sealed class AuthenticatedHttpMessageHandler : DelegatingHandler
     private readonly IAuthService _auth;
     private static readonly SemaphoreSlim _refreshLock = new(1, 1);
 
-    // Tiempo máximo para intentar refrescar (ajusta según necesidad)
+    // Tiempo máximo para intentar refrescar 
     private static readonly TimeSpan RefreshTimeout = TimeSpan.FromSeconds(10);
 
     public AuthenticatedHttpMessageHandler(IAuthService auth) => _auth = auth;

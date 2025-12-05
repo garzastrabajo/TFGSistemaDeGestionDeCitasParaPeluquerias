@@ -34,6 +34,5 @@
     <x:String x:Key="IconGlyph.Upcoming">&#xECC5;</x:String>
     <x:String x:Key="IconGlyph.Schedule">&#xE121;</x:String>
 
-    <!-- Falta en tu página: tijeras -->
     <x:String x:Key="IconGlyph.Scissors">&#xE8B5;</x:String>
 </ResourceDictionary>

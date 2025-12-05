@@ -11,7 +11,6 @@ using SistemasDeGestionCitasPeluqueria.Services;
 
 namespace SistemasDeGestionCitasPeluqueria.PageModels
 {
-    // SE AÑADEN IBarberService e IServiceOfferingService para poder enriquecer los nombres
     public partial class ReviewsPageModel(
         IReviewService reviewService,
         IUserService userService,
@@ -23,7 +22,6 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
         private readonly IBarberService _barberService = barberService;
         private readonly IServiceOfferingService _serviceOfferingService = serviceOfferingService;
 
-        // Cachés simples para evitar pedir catálogos cada vez
         private IReadOnlyList<Barber>? _barbersCache;
         private IReadOnlyList<ServiceOffering>? _servicesCache;
 
@@ -62,7 +60,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
                 IsBusy = true;
                 Error = null;
                 var all = await _reviewService.GetAllAsync(ct);
-                await EnrichNamesAsync(all, ct); // NUEVO
+                await EnrichNamesAsync(all, ct); 
                 Reviews = new ObservableCollection<ServiceReview>(all);
                 RecalcStats();
             }

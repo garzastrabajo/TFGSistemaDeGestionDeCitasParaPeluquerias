@@ -73,7 +73,6 @@ public partial class ProfilePageModel
         TotalBookings = Bookings?.Count ?? 0;
         UpcomingBookingsCount = UpcomingBookings?.Count ?? 0;
 
-        // Ahora contamos completadas detectadas en cliente y canceladas por la propiedad
         CompletedBookingsCount = Bookings?.Count(b => b.IsCompleted) ?? 0;
         CancelledBookingsCount = Bookings?.Count(b => b.IsCancelled) ?? 0;
     }

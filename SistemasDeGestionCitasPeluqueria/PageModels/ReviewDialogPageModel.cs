@@ -50,7 +50,6 @@ public partial class ReviewDialogPageModel : ObservableObject
     public IAsyncRelayCommand PublishAsyncCommand { get; }
     public IAsyncRelayCommand CancelAsyncCommand { get; }
 
-    // NUEVO: comandos para limpiar selección
     [RelayCommand]
     private void ClearBarber() => SelectedBarber = null;
 

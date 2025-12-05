@@ -19,9 +19,7 @@
                         <shapes:RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
 
-                    <!-- Altura del hero aumentada un poco más -->
                     <Grid HeightRequest="{OnIdiom Phone=360, Tablet=460, Desktop=420}">
-                        <!-- Hero desde la API (elige mejor resolución en el PageModel) -->
                         <Image Aspect="AspectFill"
                                HorizontalOptions="Fill"
                                VerticalOptions="Fill"
@@ -46,7 +44,7 @@
                 </Border>
             </Frame>
 
-            <!-- Tarjetas de información (responsivas, sin colapsar texto y con columnas equilibradas) -->
+            <!-- Tarjetas de información  -->
             <FlexLayout Direction="Row"
                         Wrap="Wrap"
                         AlignItems="Stretch"
@@ -176,7 +174,6 @@
             <!-- Nuestros Trabajos -->
             <Label Text="Nuestros Trabajos" Style="{StaticResource SectionTitleStyle}" />
 
-            <!-- FlexLayout responsivo pero sin estirar tarjetas (no pixelan) -->
             <FlexLayout Direction="Row"
                         Wrap="Wrap"
                         AlignItems="Start"
@@ -222,7 +219,7 @@
             <!-- Barberos -->
             <Label Text="Barberos" Style="{StaticResource SectionTitleStyle}" />
 
-            <!-- Tarjetas de barbero (más pequeñas) -->
+            <!-- Tarjetas de barbero -->
             <FlexLayout Direction="Row"
                         Wrap="Wrap"
                         AlignItems="Start"
@@ -365,10 +362,10 @@
                     <Border Grid.Column="0"
                             Style="{StaticResource AboutAccentBarStyle}" />
 
-                    <!-- Contenido principal (sin icono) -->
+                    <!-- Contenido principal -->
                     <VerticalStackLayout Grid.Column="1"
                                          Spacing="10"
-                                         HorizontalOptions="FillAndExpand"> <!-- + rellena la columna -->
+                                         HorizontalOptions="FillAndExpand"> 
                         <Label Text="Sobre Nosotros"
                                Style="{StaticResource SectionTitleStyle}"
                                Margin="0,0,0,4" />

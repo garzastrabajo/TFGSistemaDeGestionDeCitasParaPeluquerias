@@ -4,9 +4,7 @@ using Microsoft.Maui.Controls;
 
 namespace SistemasDeGestionCitasPeluqueria.Converters;
 
-/// <summary>
 /// Devuelve la primera letra en mayúscula del nombre. Si está vacío devuelve '?'.
-/// </summary>
 public sealed class NameInitialConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

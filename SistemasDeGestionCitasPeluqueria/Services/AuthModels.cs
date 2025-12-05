@@ -41,5 +41,5 @@ public sealed class RegisterRequestDto
     public string? Name { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? Phone { get; set; } // NUEVO
+    public string? Phone { get; set; } 
 }

@@ -10,6 +10,5 @@ public interface IUserService
     Task<UserProfile?> GetMeAsync(CancellationToken ct = default);
     Task UpdateMeAsync(UpdateUserProfileRequest request, CancellationToken ct = default);
 
-    // Nuevo: sube la foto y devuelve la URL pública
     Task<string?> UploadPhotoAsync(Stream photoStream, string fileName, CancellationToken ct = default);
 }

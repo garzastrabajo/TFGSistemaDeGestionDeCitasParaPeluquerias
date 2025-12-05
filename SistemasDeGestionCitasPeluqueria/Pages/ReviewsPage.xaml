@@ -67,12 +67,10 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:ServiceReview">
                         <Frame Style="{StaticResource CardFrameStyle}" HasShadow="True" Margin="0,6">
-                            <!-- Cambiamos a 4 filas para incluir la línea de barbero/servicio -->
                             <Grid ColumnDefinitions="48,*,Auto"
                                   RowDefinitions="Auto,Auto,Auto,Auto"
                                   ColumnSpacing="12">
 
-                                <!-- Avatar: muestra imagen si hay URL, si no inicial -->
                                 <Frame Grid.RowSpan="2"
                                          HeightRequest="40" WidthRequest="40" CornerRadius="20"
                                         BackgroundColor="{DynamicResource SidebarIconBg}"
@@ -108,7 +106,6 @@
                                        Text="{Binding Rating, Converter={StaticResource StarsConverter}}"
                                        TextColor="{DynamicResource Accent}" />
 
-                                <!-- NUEVO: línea barbero / servicio (solo si hay al menos uno) -->
                                 <HorizontalStackLayout Grid.Row="2"
                                                        Grid.Column="0"
                                                        Grid.ColumnSpan="3"

@@ -22,7 +22,7 @@ public partial class MainPageModel(
 
     [ObservableProperty] private ObservableCollection<ServiceOffering> services = [];
     [ObservableProperty] private ObservableCollection<Barber> barbers = [];
-    [ObservableProperty] private Barber? selectedBarber; // NUEVO
+    [ObservableProperty] private Barber? selectedBarber; 
     [ObservableProperty] private ObservableCollection<InventoryItem> featuredProducts = [];
     [ObservableProperty] private ObservableCollection<GalleryItem> gallery = [];
 
@@ -38,7 +38,6 @@ public partial class MainPageModel(
     [ObservableProperty] private string addressText = string.Empty;
     [ObservableProperty] private string contactText = string.Empty;
 
-    // NUEVO: contenido dinámico “Sobre Nosotros”
     [ObservableProperty] private ObservableCollection<string> aboutParagraphs = [];
     [ObservableProperty] private ObservableCollection<string> aboutHighlights = [];
 
@@ -61,7 +60,7 @@ public partial class MainPageModel(
                 {
                     BarbershopName = shop.Name;
 
-                    // Selecciona la primera imagen válida (corrigiendo "data:https://...")
+                    // Selecciona la primera imagen válida 
                     HeroImageUrl = shop.Images?
                         .Select(SanitizePotentialDataUrl)
                         .Where(IsSupportedImage)
@@ -137,7 +136,6 @@ public partial class MainPageModel(
         foreach (var block in blocks)
         {
             var lines = block.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            // Si todas las líneas parecen bullets, añadimos cada una como highlight
             if (lines.Length > 0 && lines.All(l => l.StartsWith("- ") || l.StartsWith("* ")))
             {
                 foreach (var l in lines)
@@ -223,10 +221,7 @@ public partial class MainPageModel(
         return s;
     }
 
-    // (Opcional) Comando para seleccionar desde un TapGesture si no usas SelectedItem
     [RelayCommand]
     private void SelectBarber(Barber barber) => SelectedBarber = barber;
 
-    // En LoadHomeAsync NO cambia nada; la selección inicial (si deseas) puedes hacer:
-    // if (SelectedBarber is null && Barbers.Count > 0) SelectedBarber = Barbers.First();
 }
