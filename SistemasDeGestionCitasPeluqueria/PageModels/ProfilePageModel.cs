@@ -326,7 +326,7 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
             {
                 var confirm = await Application.Current!.MainPage!.DisplayAlert(
                     "Cancelar cita",
-                    $"¿Deseas cancelar la cita #{booking.Id} del {FormatoFecha(booking.Start)}?",
+                    $"¿Deseas cancelar la cita del {FormatoFecha(booking.Start)}?",
                     "Sí", "No");
                 if (!confirm) return;
 
@@ -335,17 +335,35 @@ namespace SistemasDeGestionCitasPeluqueria.PageModels
 
                 var cancelled = await _bookingService.CancelAsync(booking.Id);
 
-                var up = UpcomingBookings?.FirstOrDefault(b => b.Id == booking.Id);
-                if (up is not null)
+                // Actualiza colecciones para que la UI refresque sin recargar toda la página
+                if (UpcomingBookings is not null)
                 {
-                    up.Status = cancelled.Status;
-                    if (up.IsCancelled)
-                        UpcomingBookings.Remove(up);
+                    var upIndex = -1;
+                    for (int i = 0; i < UpcomingBookings.Count; i++)
+                    {
+                        if (UpcomingBookings[i].Id == cancelled.Id) { upIndex = i; break; }
+                    }
+
+                    if (upIndex >= 0)
+                    {
+                        if (cancelled.IsCancelled)
+                            UpcomingBookings.RemoveAt(upIndex);
+                        else
+                            UpcomingBookings[upIndex] = cancelled;
+                    }
                 }
 
-                var hist = Bookings.FirstOrDefault(b => b.Id == booking.Id);
-                if (hist is not null)
-                    hist.Status = cancelled.Status;
+                // 2) Historial: reemplazar o insertar si no estaba
+                var histIndex = -1;
+                for (int i = 0; i < Bookings.Count; i++)
+                {
+                    if (Bookings[i].Id == cancelled.Id) { histIndex = i; break; }
+                }
+
+                if (histIndex >= 0)
+                    Bookings[histIndex] = cancelled;   //  la tarjeta se redibuja
+                else
+                    Bookings.Insert(0, cancelled);     // si no estaba en historial, lo añades
 
                 await Application.Current!.MainPage!.DisplayAlert("Cita", "La cita se canceló correctamente.", "Aceptar");
             }
